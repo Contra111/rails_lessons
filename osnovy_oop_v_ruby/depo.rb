@@ -9,17 +9,17 @@ class Station
   end
 
   def take(train)
-    if !trains.include?(train) && train.currentStation == nil
+    if !trains.include?(train) && train.current_station == nil
       @trains << Train_data.new(train.number, train.type)
-      train.setStation(self)
+      train.set_station(self)
     end
   end
 
   def send(train)
     trains_names = trains.collect { |x| x.number}
-    if trains_names.include?(train.number) && train.currentStation == self.name
+    if trains_names.include?(train.number) && train.current_station == self.name
       @trains = @trains.select { |x| x.number != train.number}
-      train.setStation(nil)
+      train.set_station(nil)
     end
   end
 
@@ -33,98 +33,98 @@ class Station
 end
 
 class Train
-  attr_reader :cars, :speed, :number, :currentStation, :type
+  attr_reader :cars, :speed, :number, :current_station, :type
 
   def initialize(number, type, cars)
     @number = number
     @type = type
     @cars = cars
     @speed = 0
-    @currentStation = nil
+    @current_station = nil
     @route = nil
-    @currentStationIndex = nil
+    @current_station_index = nil
   end
 
-  def speedUp(up)
+  def speed_up(up)
     @speed += up
   end
 
-  def speedDown
+  def speed_down
     @speed = 0
   end
 
-  def addCar
+  def add_car
     if @speed == 0 
       @cars += 1
     end
   end
 
-  def removeCar
+  def remove_car
     if @cars != 0 && @speed == 0
       @cars -= 1
     end
   end
 
-  def setStation(station)
+  def set_station(station)
     
     puts "Train #{@number} goes from "\
-         "#{@currentStation == nil ? 'nil' : @currentStation} to "\
+         "#{@current_station == nil ? 'nil' : @current_station} to "\
          "#{station == nil ? 'nil' : station.name} "
-    @currentStation = station == nil ? nil : station.name
+    @current_station = station == nil ? nil : station.name
   end
 
-  def setRoute(route)
+  def set_route(route)
     @route = route
-    @route.stationsList[0].take(self) 
-    @currentStationIndex = 0 
+    @route.stations_list[0].take(self) 
+    @current_station_index = 0 
   end
 
-  def moveForward
-    if @currentStation == @route.stationsList[-1].name
+  def move_forward
+    if @current_station == @route.stations_list[-1].name
       puts "You already on last station!"
     else
-      @route.stationsList.each_with_index do |x, i|
-        if x.name == @currentStation
-          @currentStationIndex = i
+      @route.stations_list.each_with_index do |x, i|
+        if x.name == @current_station
+          @current_station_index = i
         end
       end
-      puts @currentStationIndex
-      @route.stationsList[@currentStationIndex].send(self)
-      @route.stationsList[@currentStationIndex + 1].take(self)
-      @currentStationIndex += 1
+      puts @current_station_index
+      @route.stations_list[@current_station_index].send(self)
+      @route.stations_list[@current_station_index + 1].take(self)
+      @current_station_index += 1
     end
   end
 
-  def moveBack
-    if @currentStation == @route.stationsList[0].name
+  def move_back
+    if @current_station == @route.stations_list[0].name
       puts "You already on first station!"
     else
-      @route.stationsList.each_with_index do |x, i|
-        if x.name == @currentStation
-          @currentStationIndex = i
+      @route.stations_list.each_with_index do |x, i|
+        if x.name == @current_station
+          @current_station_index = i
         end
       end
-      puts @currentStationIndex
-      @route.stationsList[@currentStationIndex].send(self)
-      @route.stationsList[@currentStationIndex - 1].take(self)
-      @currentStationIndex -= 1
+      puts @current_station_index
+      @route.stations_list[@current_station_index].send(self)
+      @route.stations_list[@current_station_index - 1].take(self)
+      @current_station_index -= 1
     end
   end
 
-  def closestStations
-    if @currentStationIndex == nil
+  def closest_stations
+    if @current_station_index == nil
       puts "train is not on station!"
     else
-      if @currentStationIndex == 0
-        puts "current station #{@route.stationsList[@currentStationIndex].name} is first on Route"
-        puts "next station is #{@route.stationsList[@currentStationIndex + 1].name}"
-      elsif @currentStationIndex == @route.stationsList.length - 1
-        puts "previous station is #{@route.stationsList[@currentStationIndex - 1].name}"
-        puts "current station #{@route.stationsList[@currentStationIndex].name} if last on Route"
+      if @current_station_index == 0
+        puts "current station #{@route.stations_list[@current_station_index].name} is first on Route"
+        puts "next station is #{@route.stations_list[@current_station_index + 1].name}"
+      elsif @current_station_index == @route.stations_list.length - 1
+        puts "previous station is #{@route.stations_list[@current_station_index - 1].name}"
+        puts "current station #{@route.stations_list[@current_station_index].name} if last on Route"
       else
-        puts "previous station is #{@route.stationsList[@currentStationIndex - 1].name}"
-        puts "current station is #{@route.stationsList[@currentStationIndex].name}"
-        puts "next station is #{@route.stationsList[@currentStationIndex].name}"
+        puts "previous station is #{@route.stations_list[@current_station_index - 1].name}"
+        puts "current station is #{@route.stations_list[@current_station_index].name}"
+        puts "next station is #{@route.stations_list[@current_station_index].name}"
       end
     end
   end
@@ -132,31 +132,31 @@ class Train
 end
 
 class Route
-  attr_reader :firstStation, :stationsList
-  def initialize(firstStation, lastStation)
-    @stationsList = [firstStation, lastStation]
+  attr_reader :first_station, :stations_list
+  def initialize(first_station, last_station)
+    @stations_list = [first_station, last_station]
   end
 
-  def betweenStationAdd(station)
-    if !@stationsList.include?(station)
-      @stationsList = @stationsList.insert(-2, station)
+  def between_station_add(station)
+    if !@stations_list.include?(station)
+      @stations_list = @stations_list.insert(-2, station)
     end
   end
 
-  def betweenStationRemove(station)
-    if @stationsList.length != 2
-      first = @stationsList[0]
-      last = @stationsList[-1]
-      @stationsList = @stationsList[1..-2].select { |x| x.name != station.name}
-      @stationsList = @stationsList.push(last)
-      @stationsList = @stationsList.unshift(first)
+  def between_station_remove(station)
+    if @stations_list.length != 2
+      first = @stations_list[0]
+      last = @stations_list[-1]
+      @stations_list = @stations_list[1..-2].select { |x| x.name != station.name}
+      @stations_list = @stations_list.push(last)
+      @stations_list = @stations_list.unshift(first)
     else 
       puts "Route contains only 2 stations"
     end
   end
 
-  def showRoute
-    @stationsList.each { |x| puts x.name}
+  def show_route
+    @stations_list.each { |x| puts x.name}
   end
 
 end
@@ -173,26 +173,14 @@ station7 = Station.new("Station 7")
 station8 = Station.new("Station 8")
 
 route1 = Route.new(station1, station2)
-route1.betweenStationAdd(station4)
-route1.betweenStationAdd(station3)
-route1.betweenStationAdd(station6)
-route1.betweenStationAdd(station8)
+route1.between_station_add(station4)
+route1.between_station_add(station3)
+route1.between_station_add(station6)
+route1.between_station_add(station8)
 route2 = Route.new(station4, station8)
-route2.betweenStationAdd(station5)
-route2.betweenStationAdd(station7)
-route2.betweenStationAdd(station2)
+route2.between_station_add(station5)
+route2.between_station_add(station7)
+route2.between_station_add(station2)
 train1 = Train.new("Train 1", "Pass", 30)
 train2 = Train.new("Train 2", "Pass", 20)
 train3 = Train.new("Train 3", "Cargo", 70)
-
-
-
-=begin
-не понятно, когда / как нужно передавать в методе сам объект, а когда просто его поля
-Например, Station.take принимает по сути поля объекта Train
-А в Route.initialize нужно передавать объект Station т.к после создания объекта Route
-уже при вызове Train.setRoute, до Station которые в нем уже будет не достучаться, если 
-планируется использовать их методы в дальнейшем. А если бы станции хранили не поля поезда,
-а сами объекты то получился бы замкнутый рекурсивный объект где
-поезда ссылаются на маршрут, маршрут на станции, станции на поезда и т.д
-=end
