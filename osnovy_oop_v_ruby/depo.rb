@@ -16,11 +16,7 @@ class Station
   end
 
   def send(train)
-    trains_names = trains.collect { |x| x.number}
-    if trains_names.include?(train.number) && train.current_station == self.name
-      @trains = @trains.select { |x| x.number != train.number}
-      train.set_station(nil)
-    end
+    trains.delete(train)
   end
 
   def train_types
@@ -138,21 +134,11 @@ class Route
   end
 
   def between_station_add(station)
-    if !@stations_list.include?(station)
-      @stations_list = @stations_list.insert(-2, station)
-    end
+    @stations_list = @stations_list.insert(-2, station)
   end
 
   def between_station_remove(station)
-    if @stations_list.length != 2
-      first = @stations_list[0]
-      last = @stations_list[-1]
-      @stations_list = @stations_list[1..-2].select { |x| x.name != station.name}
-      @stations_list = @stations_list.push(last)
-      @stations_list = @stations_list.unshift(first)
-    else 
-      puts "Route contains only 2 stations"
-    end
+    stations_list.delete(station)
   end
 
   def show_route
