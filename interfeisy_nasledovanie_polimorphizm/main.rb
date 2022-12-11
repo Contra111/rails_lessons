@@ -35,12 +35,13 @@ class Main
   def start
     loop do
       MENU.each {|x| puts "#{x[:index]} - #{x[:title]}"}
+      puts '9 - Выход'
+      puts ''
       print 'Ввод : '
       user_input = gets.chomp.to_i
+      break if user_input == 9
       need_item = MENU.find {|x| x[:index] == user_input}
       send(need_item[:action])
-      puts 'Нажмите любую кнопку или введите выход, чтобы закончить'
-      break if gets.chomp == 'выход'
     end
   end
 
