@@ -66,7 +66,7 @@ class Main
       @trains << PassengerTrain.new(@train_name)
       puts "Добавлен #{@train_type} поезд #{@train_name}"
     else
-      puts 'Ошибка!'
+      raise 'Введен некорректный типа поезда! '
     end
   rescue
     puts ''

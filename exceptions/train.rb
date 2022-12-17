@@ -29,9 +29,9 @@ class Train
     # @route = nil
     # @current_station_index = nil
     @cars = []
-    @@trains << self
-    register_instance
     validate!
+    register_instance
+    @@trains << self
   end
 
   def speed_up(up)
